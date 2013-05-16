@@ -1,0 +1,233 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; set EMACS PATH
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defvar sitedir "/home/jyang/program/third-party/emacs/")
+(defvar sitelispdir (concat sitedir "site-lisp/"))
+(add-to-list 'load-path sitelispdir)
+
+(defun set-exec-path-from-shell-PATH ()
+  (let ((path-from-shell (shell-command-to-string "$SHELL -l -c 'echo $PATH'")))
+    (setenv "PATH" path-from-shell)
+    (setq exec-path (split-string path-from-shell path-separator))))
+(set-exec-path-from-shell-PATH)
+
+(defun set-python-path-from-shell-PYTHONPATH ()
+  (let ((path-from-shell (shell-command-to-string "$SHELL -l -c 'echo $PYTHONPATH'")))
+    (setenv "PYTHONPATH" path-from-shell)
+    (setq python-path (split-string path-from-shell path-separator))))
+(set-python-path-from-shell-PYTHONPATH)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; general
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(global-font-lock-mode t)
+(show-paren-mode t)
+(setq show-paren-style 'parentheses)
+(tool-bar-mode 0)
+(setq frame-title-format
+      '("%S" (buffer-file-name "%f"
+		(dired-directory dired-directory "%b"))))
+
+;;(setq display-time-24hr-format t)
+;;(setq display-time-day-and-date t)
+;;(display-time)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; color
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (set-cursor-color "white")
+;; (set-mouse-color "blue")
+;; (set-foreground-color "lightblue")
+;; (set-background-color "black")
+;; (set-border-color "lightgreen")
+
+;; (set-face-foreground 'highlight "red")
+;; (set-face-background 'highlight "blue")
+;; (set-face-foreground 'region "cyan")
+;; (set-face-background 'region "blue")
+;; (set-face-foreground 'secondary-selection "skyblue")
+;; (set-face-background 'secondary-selection "darkblue")
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; cedet
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; ;; Load CEDET.
+;; ;; See cedet/common/cedet.info for configuration details.
+;; ;; IMPORTANT: Tou must place this *before* any CEDET component (including
+;; ;; EIEIO) gets activated by another package (Gnus, auth-source, ...).
+;; (load-file (concat sitedir "cedet/cedet-devel-load.el"))
+
+;; ;; Add further minor-modes to be enabled by semantic-mode.
+;; ;; See doc-string of `semantic-default-submodes' for other things
+;; ;; you can use here.
+;; (add-to-list 'semantic-default-submodes 'global-semantic-idle-summary-mode t)
+;; (add-to-list 'semantic-default-submodes 'global-semantic-idle-completions-mode t)
+;; (add-to-list 'semantic-default-submodes 'global-cedet-m3-minor-mode t)
+
+;; ;; Enable Semantic
+;; (semantic-mode 1)
+
+;; ;; Enable EDE (Project Management) features
+;; (global-ede-mode 1)
+
+;; ;; Load CEDET CONTRIB.
+;; (load-file (concat sitedir "cedet/contrib/cedet-contrib-load.el"))
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; ecb
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (add-to-list 'load-path (concat sitedir "ecb/"))
+;; (require 'ecb)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; chinese support
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;(set-language-environment 'Chinese-GB)
+;;(set-keyboard-coding-system 'euc-cn)
+;;(set-clipboard-coding-system 'euc-cn)
+;;(set-terminal-coding-system 'euc-cn)
+;;(set-buffer-file-coding-system 'euc-cn)
+;;(set-selection-coding-system 'euc-cn)
+;;(modify-coding-system-alist 'process "*" 'euc-cn)
+;;(setq default-process-coding-system '(euc-cn . euc-cn))
+;;(setq-default pathname-coding-system 'euc-cn)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; tex/latex
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(load "auctex.elc" nil t t)
+(load "preview-latex.el" nil t t)
+
+(setq-default TeX-master nil)
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+(setq TeX-save-query nil)
+(setq TeX-show-compilation nil)
+(setq TeX-auto-untabify nil)
+(setq-default TeX-PDF-mode t)
+(setq TeX-view-program-selection
+      '(((output-dvi style-pstricks) "dvips and gv")
+	(output-dvi "xdvi")
+	(output-pdf "xpdf")
+	(output-html "xdg-open")))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; yasnippet
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(add-to-list 'load-path (concat sitedir "yasnippet/"))
+(require 'yasnippet) 
+(yas-global-mode 1)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; cc mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun linux-c-indent ()
+  "adjusted defaults for C/C++ mode use"
+  (interactive)
+  (setq tab-width 8)
+  (setq indent-tabs-mode nil)
+  (setq c-basic-offset 8)
+  (c-set-style "linux"))
+
+(add-hook 'c-mode-common-hook 'linux-c-indent)
+
+;; (defun iwb ()
+;;   "indent whole buffer"
+;;   (interactive)
+;;   (delete-trailing-whitespace)
+;;   (indent-region (point-min) (point-max) nil)
+;;   (untabify (point-min) (point-max)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; auto completion
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories (concat sitelispdir "ac-dict"))
+(ac-config-default)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; shell mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; multi-web-mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (add-to-list 'load-path
+;;                   "~jyang/.emacs.d/plugin/fgallina-multi-web-mode-0a38246/")
+;; (require 'multi-web-mode)
+;; (setq mweb-default-major-mode 'html-mode)
+;; (setq mweb-tags '((php-mode "<\\?php\\|<\\? \\|<\\?=" "\\?>")
+;;                   (js-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
+;;                   (css-mode "<style +type=\"text/css\"[^>]*>" "</style>")))
+;; (setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5"))
+;; (multi-web-global-mode 1)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; cperl-mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defalias 'perl-mode 'cperl-mode)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; bbdb-mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (require 'bbdb)
+;; (bbdb-initialize)
+;; (put 'upcase-region 'disabled nil)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; matlab-mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(add-to-list 'load-path (concat sitedir "matlab-emacs"))
+(load-library "matlab-load")
+;;(matlab-cedet-setup)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ess-mode
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;(load (concat sitedir "ess/lisp/ess-site"))
+
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; pymacs
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; (autoload 'pymacs-apply "pymacs")
+;; (autoload 'pymacs-call "pymacs")
+;; (autoload 'pymacs-eval "pymacs" nil t)
+;; (autoload 'pymacs-exec "pymacs" nil t)
+;; (autoload 'pymacs-load "pymacs" nil t)
+;; (autoload 'pymacs-autoload "pymacs")
+;; ;;(eval-after-load "pymacs"
+;; ;;  '(add-to-list 'pymacs-load-path YOUR-PYMACS-DIRECTORY"))
+
+;; ;; prevent redefining of standard and custom key bindings
+;; ;;(setq ropemacs-enable-shortcuts nil)
+;; ;;(setq ropemacs-local-prefix "C-c C-p")
+
+;; (require 'pymacs)
+;; (pymacs-load "ropemacs" "rope-")
+
+;; (defun load-ropemacs ()
+;;     "Load pymacs and ropemacs"
+;;     (interactive)
+;;     (require 'pymacs)
+;;     (pymacs-load "ropemacs" "rope-")
+;;     ;; Automatically save project python buffers before refactorings
+;;     (setq ropemacs-confirm-saving 'nil)
+;;   )
+;; (global-set-key "\C-xpl" 'load-ropemacs)
